@@ -28,6 +28,7 @@ void parse_tokens(char cmd[], char *par[]){
 
 	for(int j = 0; j < i; j++){
 		par[j] = array[j];
+		printf("%s",par[j]);
 	}
 	par[i] = NULL;
 
