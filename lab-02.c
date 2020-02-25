@@ -7,6 +7,7 @@
 #include "parse_tokens.c"
 #include "extract_tokens.c"
 #define BUFSIZE 256
+#define NUM_PATHS 6
 	int main(int argc, char *argv[]){
 			
 		char cmd[256], command[256], *parameters[20];
@@ -21,8 +22,7 @@
 			wait(NULL);
 		
 		}else{
-			for(int i = 0; i < 7; i++){
-				printf("Command is: %s",command);
+			for(int i = 0; i < NUM_PATHS; i++){
 				strcpy(cmd,PATH[i]);
 				strcat(cmd,"/");
 				strcat(cmd,command);
@@ -32,11 +32,11 @@
 					exit(0);
 				}
 				else if(strstr(parameters[0],"cd")){
-					chdir(command);
+					chdir(parameters[0]);
 				}
 				else
 				{
-					printf("Command %s not found",cmd);
+
 				}	
 			}	
 		}

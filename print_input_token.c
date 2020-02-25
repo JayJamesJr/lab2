@@ -5,6 +5,6 @@
 #include<string.h>
 #include "print_input_token.h"
 void print_input_token(){
-	printf("$\n");
+	printf("$");
 
 }

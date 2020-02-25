@@ -4,7 +4,7 @@
 #include"extract_tokens.h"
 char ** extract_tokens(char *str, char* delim){
 	
-	char ** tokens = malloc(sizeof(char*) * 7);
+	char ** tokens = malloc(sizeof(char*) * 6);
 	if(tokens == NULL)
 		return NULL;
 	
