@@ -20,35 +20,35 @@ int main(int argc, char *argv[]){
 			
 		char cmd[256], command[256], *parameters[20];
 		char *envvar[] = {(char*) getenv("PATH"),0};
-		//int pipefd[4];
-		//pipe(pipefd);
-		//pipe(pipefd + 2);
+		int pipefd[2];
+		pipe(pipefd);
+		
 		while(1){
 			print_input_token();
+			parse_tokens(command, parameters);
 		if(fork() != 0)
 		{
-			wait(NULL);
-			/*dup2(pipefd[1],1);
+			//wait(NULL);
+			dup2(pipefd[1],1);
 			close(pipefd[0]);
 			parse_tokens(command, parameters);
-			combine_paths("/bin",cmd,command);
-			if(file_exists(cmd) == 1){
-				execve(cmd,parameters,envvar);
-			}else{
-				perror("Command not found");
-			}
-			*/
-		
+			execve(cmd, parameters, envvar);
+
 		}else{
+			memset(command, 0, 256);
+			memset(cmd, 0, 256);
+			memset(parameters, 0, sizeof(char *) *20);
 			parse_tokens(command,parameters);
 			combine_paths("/bin",cmd,command);
+			dup2(pipefd[0], 0);
 			if(file_exists(cmd) == 1){
+				close(pipefd[1]);
 				execve(cmd,parameters,envvar);
 			
 			}else{
+				close(pipefd[1]);
 				perror("Command not found");
 			}	
-				
 		}
 		if(strcmp(command,"cd") == 0){
 			char buffer[1024];
