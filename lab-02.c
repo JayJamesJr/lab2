@@ -25,6 +25,7 @@ int main(int argc, char *argv[]){
 		//pipe(pipefd + 2);
 		while(1){
 			print_input_token();
+			parse_tokens(command,parameters);
 		if(fork() != 0)
 		{
 			wait(NULL);
@@ -40,7 +41,6 @@ int main(int argc, char *argv[]){
 			*/
 		
 		}else{
-			parse_tokens(command,parameters);
 			combine_paths("/bin",cmd,command);
 			if(file_exists(cmd) == 1){
 				execve(cmd,parameters,envvar);
