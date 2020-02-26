@@ -18,8 +18,7 @@
 		char *envvar[] = {(char*) getenv("PATH"),0};
 		char * path = getenv("PATH");
 		char ** PATH = extract_tokens(path,":");
-		int status = 1;
-		while(status){	
+		while(1){	
 		print_input_token();
 		parse_tokens(command, parameters);
 		if(fork() != 0)
@@ -34,22 +33,25 @@
 				if (access(cmd, F_OK) != -1){
 					execve(cmd,parameters,envvar);
 				
-				}else if(strstr(parameters[0],"exit")){
-					status = 0;
-					executeCMD("exit");
-					exit(0);
 				}
-				else if(strcmp(cmd,"cd")){
-					chdir(parameters[0]);
+				else if(strcmp(command,"cd ")){
+					char buffer[1024];
+					char* dir = getcwd(buffer,1024);
+					strcat(dir,"/");
+					strcat(dir,parameters[0]);
+					chdir(dir);
 				}
-				else if(strstr(parameters[0], "ls")) {
-					OSpipe();
+				else if(strstr(command, "ls")) {
+					//OSpipe();
+				}else{
+					perror("Command not found");
 				}
-				else
-				{
-
-				}	
-			}	
+			
+			}
+				
+		}
+		if(strcmp(command,"exit") == 0){
+			break;
 		}
 	
 		}
