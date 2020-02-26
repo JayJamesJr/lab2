@@ -13,27 +13,22 @@ void parse_tokens(char cmd[], char *par[]){
 	int count = 0;
 	char *array[100], *pch;
 	int i = 0;
-	/*for (;;){
-		int c = fgetc(stdin);
-		input_line[count++] = (char) c;
-		if (c == '\n') break;
-	}*/
 
-	//if(count == 1) return;
+
 	fgets(input_line,1024,stdin);
 	pch = strtok(input_line, " ");
 
 	while ( pch != NULL){
 		array[i++] = strdup(pch);
-		pch = strtok(NULL, " ");
+		pch = strtok(NULL, "\n");
 	}
 
 	strcpy(cmd, array[0]);
-
 	for(int j = 0; j < i; j++){
 		par[j] = array[j];
 	}
-	par[i] = '\0';
+	
+	par[i] = NULL;
 	
 
 	

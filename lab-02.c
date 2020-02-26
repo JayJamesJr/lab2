@@ -7,14 +7,11 @@
 #include "print_input_token.c"
 #include "parse_tokens.c"
 #include "extract_tokens.c"
-#include "executeCMD.h"
+#include "executeCMD.c"
 #include "pipe.c"
 #define BUFSIZE 256
-<<<<<<< HEAD
 #define NUM_PATHS 6
-=======
 
->>>>>>> 743469cb64a600996bc1b30add91d4baec782399
 	int main(int argc, char *argv[]){
 			
 		char cmd[256], command[256], *parameters[20];
@@ -22,7 +19,7 @@
 		char * path = getenv("PATH");
 		char ** PATH = extract_tokens(path,":");
 		int status = 1;
-		while(status != 0){	
+		while(status){	
 		print_input_token();
 		parse_tokens(command, parameters);
 		if(fork() != 0)
@@ -42,7 +39,7 @@
 					executeCMD("exit");
 					exit(0);
 				}
-				else if(strstr(parameters[0],"cd")){
+				else if(strcmp(cmd,"cd")){
 					chdir(parameters[0]);
 				}
 				else if(strstr(parameters[0], "ls")) {
