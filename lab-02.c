@@ -34,26 +34,25 @@
 					execve(cmd,parameters,envvar);
 				
 				}
-				else if(strcmp(command,"cd ")){
-					char buffer[1024];
-					char* dir = getcwd(buffer,1024);
-					strcat(dir,"/");
-					strcat(dir,parameters[0]);
-					chdir(dir);
-				}
 				else if(strstr(command, "ls")) {
 					//OSpipe();
-				}else{
-					perror("Command not found");
 				}
 			
 			}
 				
 		}
 		if(strcmp(command,"exit") == 0){
-			break;
+			exit(0);
 		}
 	
+		
+		else if(strcmp(command,"cd") == 0){
+			char buffer[1024];
+			char* dir = getcwd(buffer,1024);
+			strcat(dir,"/");
+			strcat(dir,parameters[0]);
+			chdir(dir);
+		}
 		}
 		
 		return 0;
