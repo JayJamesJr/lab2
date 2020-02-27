@@ -11,19 +11,19 @@ void parse_tokens(char cmd[], char *par[]){
 
 	
 	int count = 0;
-	char *array[100], *pch;
+	char *array[256], *pch;
 	int i = 0;
 
 
 	fgets(input_line,1024,stdin);
 	pch = strtok(input_line, " ");
-
 	while ( pch != NULL){
 		array[i++] = strdup(pch);
 		pch = strtok(NULL, "\n");
 	}
 
 	strcpy(cmd, array[0]);
+	cmd[strlen(cmd)] = '\0';
 	for(int j = 0; j < i; j++){
 		par[j] = array[j];
 	}

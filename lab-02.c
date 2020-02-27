@@ -14,42 +14,65 @@
 #include "pipe.c"
 #include "combine_paths.c"
 #include "file_exists.c"
+#include "check_path.c"
 #define BUFSIZE 256
 
 int main(int argc, char *argv[]){
 			
 		char cmd[256], command[256], *parameters[20];
+
 		char *envvar[] = {(char*) getenv("PATH"),0};
+		char *bin = "/bin";
 		int pipefd[2];
 		pipe(pipefd);
-		
 		while(1){
 			print_input_token();
-			parse_tokens(command, parameters);
+			//parse_tokens(command, parameters);
 		if(fork() != 0)
 		{
 			//wait(NULL);
-			// printf("in parent\n");
-			//dup2(pipefd[1],1);
-			// close(pipefd[0]);
-			parse_tokens(command, parameters);
-			execve(cmd, parameters, envvar);
-
-		}else{
-			memset(command, 0, 256);
-			memset(cmd, 0, 256);
-			memset(parameters, 0, sizeof(char *) *20);
+			//printf("in parent\n");
+			//print_input_token();
 			parse_tokens(command,parameters);
-			combine_paths("/bin",cmd,command);
-			dup2(pipefd[0], 0);
+			combine_paths(bin,cmd,command);
 			if(file_exists(cmd) == 1){
-				// close(pipefd[1]);
+				dup2(pipefd[1], 1);
+				close(pipefd[0]);
 				execve(cmd,parameters,envvar);
 			
 			}else{
+				char*path = check_path(command);
+				if(path != NULL){
+					dup2(pipefd[1],1);
+					close(pipefd[0]);
+					execve(path,parameters,envvar);
+				}else{
+					perror("Command not found");
+				}
+			}
+		}else{
+			
+			//printf("%s\n","In child");
+			parse_tokens(command,parameters);
+			combine_paths(bin,cmd,command);
+			if(file_exists(cmd) == 1){
+				dup2(pipefd[0], 0);
+				close(pipefd[1]);
+				execve(cmd,parameters,envvar);
+			
+			}else{
+				char*path = check_path(command);
+				if(path != NULL){
+					dup2(pipefd[0],0);
+					close(pipefd[1]);
+					execve(path,parameters,envvar);
+				}else{
+					perror("Command not found");
+				}
 				// close(pipefd[1]);
-				perror("Command not found");
-			}	
+				
+			}
+			
 		}
 		if(strcmp(command,"cd") == 0){
 			char buffer[1024];
