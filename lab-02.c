@@ -21,6 +21,51 @@ int main(int argc, char *argv[]){
 			int has_pipe_char = has_pipe(input_line);
 		if(has_pipe_char == 1){
 			//handle_fork();
+			// 0 is read end, 1 is write end 
+		    int pipefd[2];  
+		    pid_t p1, p2; 
+
+		    if (pipe(pipefd) < 0) { 
+			printf("\nPipe could not be initialized"); 
+			return; 
+		    } 
+		    p1 = fork(); 
+		    if (p1 < 0) { 
+			printf("\nCould not fork"); 
+			return; 
+		    } 
+
+		    if (p1 == 0) { 
+			// Child 1 executing.. 
+			// It only needs to write at the write end 
+			close(pipefd[0]); 
+			dup2(pipefd[1], STDOUT_FILENO); 
+			close(pipefd[1]); 
+			execve(cmd,parameters,envvar);
+			    
+		    } else { 
+			// Parent executing 
+			p2 = fork(); 
+
+			if (p2 < 0) { 
+			    printf("\nCould not fork"); 
+			    return; 
+			} 
+
+			// Child 2 executing.. 
+			// It only needs to read at the read end 
+			if (p2 == 0) { 
+			    close(pipefd[1]); 
+			    dup2(pipefd[0], STDIN_FILENO); 
+			    close(pipefd[0]); 
+			    execve(cmd,parameters,envvar);
+			     
+			} else { 
+			    // parent executing, waiting for two children 
+			    wait(NULL); 
+			    wait(NULL); 
+			} 
+		    } 
 		}else{
 			char* builtin = has_builtin(input_line);
 			if(builtin != NULL){
