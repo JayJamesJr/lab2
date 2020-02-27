@@ -70,110 +70,6 @@ void combine_paths(char *path, char *cmd,char *command){
 
 
 int executeCMD(char* userInput) {
-
-    int numCommands = 5;
-
-    int switching = 0;
-
-    char* listOfCommands[numCommands];
-
-
-
-    //array for available commands in the shell
-
-    listOfCommands[0] = "exit";
-
-    listOfCommands[1] = "cd";
-
-    listOfCommands[2] = "cat";
-
-    listOfCommands[3] = "bash";
-
-    listOfCommands[4] = "uname";
-
-
-
-    //iterating through the commands to see if there is a match
-
-    for(int i = 0; i < numCommands; i++) {
-
-        if(strcmp(userInput, listOfCommands[i]) == 0) {
-
-            switching = i+1;
-
-            break;
-
-        }
-
-        // else if(listOfCommands[4] != 0) {
-
-        //     printf("\nCommand not found\n");
-
-        //     break;
-
-        // }
-
-        else {
-
-            printf("Program terminated with exit code N");
-
-        }
-
-    }
-
-
-
-    switch(switching) {
-
-        //case for exiting the shell
-
-        case 1:
-
-            printf("\nTerminating shell\n");
-
-            return(0);
-
-            exit(1);
-
-        //case for changing directory
-
-        case 2:
-
-            //chdir(userInput[1]);
-
-            return 1;
-
-        //case for concatonation
-
-        case 3:
-
-            // printf("\n");
-
-            // catCommand(userInput[1]);
-
-            // exit(0);
-
-        //case for bash command
-
-        case 4:
-
-        case 5:
-
-            printf("Linux");
-
-        default:
-
-            break;
-
-    }
-
-
-
-    return 0;
-
-}
-
-int executeCMD(char* userInput) {
     int numCommands = 5;
     int switching = 0;
     char* listOfCommands[numCommands];
@@ -238,7 +134,7 @@ int executeCMD(char* userInput) {
 
 char ** extract_tokens(char *str, char* delim){
 	
-	char ** tokens = malloc(sizeof(char*) * 6);
+	char ** tokens = malloc(sizeof(char*) * 10);
 	if(tokens == NULL)
 		return NULL;
 	
@@ -248,7 +144,7 @@ char ** extract_tokens(char *str, char* delim){
 	{
 		tokens[i++] = token;
 		token = strtok(NULL, delim);
-	
+		
 	}
 	return tokens;
 
@@ -262,49 +158,48 @@ int file_exists(char* filepath){
 }
 
 int has_pipe(char * input_line){
-	if(strstr(input_line,"|") == 1){
+	if(strchr(input_line,'|') != NULL){
 		return 1;
 	}
 	return 0;
 }
 
-int is_builtin(char* command){
+char * has_builtin(char* command){
 	int num_builtins = 2;
-	char * builtins = {"exit","cd"};
+	char * builtins[2] = {"exit","cd"};
+	char ** command_tokens = extract_tokens(command, " ");
 	for(int i = 0; i <num_builtins; i++){
-		if(strstr(builtins,command) == 0){
-			return 1;
+		if(strstr(builtins[i],command_tokens[0]) != NULL){
+			char *cmd = command_tokens[0];
+			return cmd;
 		}
 	}
-	return 0;
+	return NULL;
 }
 
-void parse_tokens(char cmd[], char *par[]){
+char* parse_tokens(char cmd[], char *par[]){
 
 	char input_line[1024];
-	for(int i = 0; i < 1024; i++){
-		input_line[i] = 0;
-	}
 
-	
 	int count = 0;
-	char *array[256], *pch;
+	char *array[256], **pch;
 	int i = 0;
 
 
 	fgets(input_line,1024,stdin);
-	pch = strtok(input_line, " ");
-	while ( pch != NULL){
-		array[i++] = strdup(pch);
-		pch = strtok(NULL, "\n");
+	pch = extract_tokens(input_line,"\n");
+	int length = sizeof(pch)/sizeof(pch[0]);
+	for(i = 0; i < length; i++){	
+		array[i] = pch[i];
 	}
 
-	strcpy(cmd, array[0]);
-	cmd[strlen(cmd)] = '\0';
 	for(int j = 0; j < i; j++){
 		par[j] = array[j];
 	}
+	strcpy(cmd,par[0]);
 	par[i] = NULL;
+	char *line = input_line;
+	return line;
 }
 
 void print_input_token(){
