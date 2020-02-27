@@ -32,10 +32,7 @@ int main(int argc, char *argv[]){
 				}	
 			}else{ 
 				if (fork() == 0){
-					strcpy(cmd,bin);
-					strcat(cmd,"/");
-					strcat(cmd,parameters[0]);
-					printf("%s\n",parameters[0]);
+					combine_paths(bin,cmd,command);
 					if(file_exists(cmd) == 1){
 					
 						execve(cmd,parameters,envvar);

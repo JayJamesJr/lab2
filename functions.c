@@ -28,6 +28,7 @@ void combine_paths(char *path, char *cmd,char *command){
 	strcpy(cmd,path);
 	strcat(cmd,"/");
 	strcat(cmd,command);
+
 }
 // void catCommand(char userInput) {
 
@@ -182,21 +183,22 @@ char* parse_tokens(char cmd[], char *par[]){
 	char input_line[1024];
 
 	int count = 0;
-	char *array[256], **pch;
+	char *array[256], *pch;
 	int i = 0;
 
 
 	fgets(input_line,1024,stdin);
-	pch = extract_tokens(input_line,"\n");
-	int length = sizeof(pch)/sizeof(pch[0]);
-	for(i = 0; i < length; i++){	
-		array[i] = pch[i];
+	pch = strtok(input_line," \",\n");
+	while(pch != NULL){	
+		array[i++] = strdup(pch);
+		pch = strtok(NULL," \n");
 	}
 
 	for(int j = 0; j < i; j++){
+		
 		par[j] = array[j];
 	}
-	strcpy(cmd,par[0]);
+	strcpy(cmd,array[0]);
 	par[i] = NULL;
 	char *line = input_line;
 	return line;
