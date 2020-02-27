@@ -27,12 +27,12 @@ int main(int argc, char *argv[]){
 
 		    if (pipe(pipefd) < 0) { 
 			printf("\nPipe could not be initialized"); 
-			return; 
+			return -1; 
 		    } 
 		    p1 = fork(); 
 		    if (p1 < 0) { 
 			printf("\nCould not fork"); 
-			return; 
+			return -1; 
 		    } 
 
 		    if (p1 == 0) { 
@@ -49,7 +49,7 @@ int main(int argc, char *argv[]){
 
 			if (p2 < 0) { 
 			    printf("\nCould not fork"); 
-			    return; 
+			    return -1; 
 			} 
 
 			// Child 2 executing.. 
