@@ -266,11 +266,13 @@ void unix_shell(){
 		}else{
 			char* builtin = has_builtin(input_line);
 			if(builtin != NULL){
-				if(strstr(builtin,"exit") != NULL){
+				if(strstr(builtin,"exit") != NULL){ //if statement to initiate exit
+					printf("Shell terminating\n");
 					break;		
-				}else if(builtin,"cd" != NULL){
+				}else if(builtin,"cd" != NULL){ //if statement to initiate cd
 					char buf[1024];
-					chdir(strcat(getcwd(buf,1024),parameters[0]));
+					
+					chdir(parameters[1]);
 				}	
 			}else{ 
 				if (fork() == 0){
