@@ -224,12 +224,12 @@ void unix_shell(){
 
 		    if (pipe(pipefd) < 0) { 
 			printf("\nPipe could not be initialized"); 
-			return -1; 
+			return; 
 		    } 
 		    p1 = fork(); 
 		    if (p1 < 0) { 
 			printf("\nCould not fork"); 
-			return -1; 
+			return; 
 		    } 
 
 		    if (p1 == 0) { 
@@ -246,7 +246,7 @@ void unix_shell(){
 
 			if (p2 < 0) { 
 			    printf("\nCould not fork"); 
-			    return -1; 
+			    return; 
 			} 
 
 			// Child 2 executing.. 
