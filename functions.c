@@ -5,6 +5,7 @@
 #include<string.h>
 #define NUMPATHS 6
 
+//method to determine if the path does indeed exist.
 char * check_path(char *command){
 	char *path = getenv("PATH");
 	char **tokens = extract_tokens(path, ":");
@@ -17,120 +18,16 @@ char * check_path(char *command){
 			printf("Command found in filepath: %s", filepath);
 			file = filepath;
 		}else{
-			memset(filepath,0,256);
+			memset(filepath,0,256); //used to fill memory
 		}
 	}
 	return file;
-
 }
 
 void combine_paths(char *path, char *cmd,char *command){
 	strcpy(cmd,path);
 	strcat(cmd,"/");
 	strcat(cmd,command);
-
-}
-// void catCommand(char userInput) {
-
-//     int size = strlen(userInput - 1);
-
-//     char skippedUserInput[size];
-
-//     char delimiter[] = " ";
-
-//     char finalString[100];
-
-
-
-//     for(int i = 1; i < strlen(userInput); i++) {
-
-//         skippedUserInput[i] = userInput[i];
-
-//     }
-
-
-
-//     char *ptr = strtok(skippedUserInput, delimiter);
-
-
-
-//     while(ptr != NULL) {
-
-//         strcat(finalString, ptr);
-
-//         ptr = strtok(NULL, delimiter);
-
-//     }
-
-
-
-//     printf("Concatonated string: %s\n", ptr); 
-
-// }
-
-
-
-int executeCMD(char* userInput) {
-    int numCommands = 5;
-    int switching = 0;
-    char* listOfCommands[numCommands];
-
-    //array for available commands in the shell
-    listOfCommands[0] = "exit";
-    listOfCommands[1] = "cd";
-    listOfCommands[2] = "cat";
-    listOfCommands[3] = "bash";
-    listOfCommands[4] = "uname";
-
-    //iterating through the commands to see if there is a match
-
-    for(int i = 0; i < numCommands; i++) {
-        if(strcmp(userInput, listOfCommands[i]) == 0) {
-           switching = i+1;
-            break;
-        }
-
-        // else if(listOfCommands[4] != 0) {
-        //     printf("\nCommand not found\n");
-        //     break;
-        // }
-
-        else {
-            printf("Program terminated with exit code N");
-        }
-    }
-    switch(switching) {
-        //case for exiting the shell
-        case 1:
-            printf("\nTerminating shell\n");
-            return(0);
-            exit(1);
-
-        //case for changing directory
-        case 2:
-            //chdir(userInput[1]);
-            return 1;
-        //case for concatonation
-        case 3:
-            // printf("\n");
-            // catCommand(userInput[1]);
-            // exit(0);
-
-        //case for bash command
-
-        case 4:
-
-        case 5:
-
-            printf("Linux");
-
-        default:
-            break;
-
-    }
-
-    return 0;
-
 }
 
 char ** extract_tokens(char *str, char* delim){
@@ -151,13 +48,15 @@ char ** extract_tokens(char *str, char* delim){
 
 }
 
+//method to check that the path is valid
 int file_exists(char* filepath){
-	if (access(filepath, F_OK) != -1){
+	if (access(filepath, F_OK) != -1){ //F_OK looks for existence of file
 		return 1;	
 	}		
 	return 0;
 }
 
+//checks for | symbol in user input
 int has_pipe(char * input_line){
 	if(strchr(input_line,'|') != NULL){
 		return 1;
@@ -165,6 +64,7 @@ int has_pipe(char * input_line){
 	return 0;
 }
 
+//method for determining if user input has exit or cd
 char * has_builtin(char* command){
 	int num_builtins = 2;
 	char * builtins[2] = {"exit","cd"};
@@ -178,24 +78,22 @@ char * has_builtin(char* command){
 	return NULL;
 }
 
+//parses the tokens so we can get each individual input
 char* parse_tokens(char cmd[], char *par[]){
 
 	char input_line[1024];
-
 	int count = 0;
 	char *array[256], *pch;
 	int i = 0;
 
-
 	fgets(input_line,1024,stdin);
-	pch = strtok(input_line," \",\n");
+	pch = strtok(input_line," \",\n"); //breaks string into tokens
 	while(pch != NULL){	
 		array[i++] = strdup(pch);
 		pch = strtok(NULL," \n");
 	}
 
 	for(int j = 0; j < i; j++){
-		
 		par[j] = array[j];
 	}
 	strcpy(cmd,array[0]);
@@ -205,7 +103,7 @@ char* parse_tokens(char cmd[], char *par[]){
 }
 
 void print_input_token(){
-	printf("$");
+	printf("$"); //print $ as default prompt
 }
 
 void unix_shell(){
@@ -217,7 +115,6 @@ void unix_shell(){
 			char * input_line = parse_tokens(command,parameters);
 			int has_pipe_char = has_pipe(input_line);
 		if(has_pipe_char == 1){
-			//handle_fork();
 			// 0 is read end, 1 is write end 
 		    int pipefd[2];  
 		    pid_t p1, p2; 
@@ -264,21 +161,19 @@ void unix_shell(){
 			} 
 		    } 
 		}else{
+			//checks for exit/cd
 			char* builtin = has_builtin(input_line);
 			if(builtin != NULL){
 				if(strstr(builtin,"exit") != NULL){ //if statement to initiate exit
-					printf("Shell terminating\n");
 					break;		
 				}else if(builtin,"cd" != NULL){ //if statement to initiate cd
-					char buf[1024];
-					
+					char buf[1024];					
 					chdir(parameters[1]);
 				}	
 			}else{ 
 				if (fork() == 0){
 					combine_paths(bin,cmd,command);
-					if(file_exists(cmd) == 1){
-					
+					if(file_exists(cmd) == 1){				
 						execve(cmd,parameters,envvar);
 					}else{
 						char*path = check_path(command);
@@ -298,6 +193,3 @@ void unix_shell(){
 			
 	}
 }
-
-
-
