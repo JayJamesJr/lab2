@@ -134,10 +134,19 @@ void unix_shell(){
 			// It only needs to write at the write end 
 			close(pipefd[0]); 
 			dup2(pipefd[1], STDOUT_FILENO); 
-			close(pipefd[1]); 
-			execve(cmd,parameters,envvar);
+			close(pipefd[1]);
+			combine_paths(bin,cmd,command);
+			if(file_exists(cmd) == 1){				
+				execve(cmd,parameters,envvar);
+			}else{
+				char*path = check_path(command);
+				if(path != NULL){
+					execve(path,parameters,envvar);
+				}else{
+					perror("Command not found");
+			}	
 			    
-		    } else { 
+		    	} else { 
 			// Parent executing 
 			p2 = fork(); 
 
@@ -151,9 +160,17 @@ void unix_shell(){
 			if (p2 == 0) { 
 			    close(pipefd[1]); 
 			    dup2(pipefd[0], STDIN_FILENO); 
-			    close(pipefd[0]); 
-			    execve(cmd,parameters,envvar);
-			     
+			    close(pipefd[0]);
+			    combine_paths(bin,cmd,command);
+			    if(file_exists(cmd) == 1){				
+				execve(cmd,parameters,envvar);
+			    }else{
+				char*path = check_path(command);
+				if(path != NULL){
+					execve(path,parameters,envvar);
+				}else{
+					perror("Command not found");
+				}			     
 			} else { 
 			    // parent executing, waiting for two children 
 			    wait(NULL); 
