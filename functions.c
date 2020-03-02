@@ -103,7 +103,6 @@ char* parse_tokens(char cmd[], char *par[]){
 }
 
 void print_input_token(char * currdir){
-	char env[512];
 	setenv("PS1","$",1);
 	printf("%s@%s%s",getenv("USER"),currdir,getenv("PS1")); //print $ as default prompt
 
@@ -189,8 +188,7 @@ void unix_shell(){
 			if(builtin != NULL){
 				if(strstr(builtin,"exit") != NULL){ //if statement to initiate exit
 					break;		
-				}else if(builtin,"cd" != NULL){ //if statement to initiate cd
-					char buf[1024];					
+				}else if(builtin,"cd" != NULL){ //if statement to initiate cd					
 					chdir(parameters[1]);
 				}	
 			}else{ 
