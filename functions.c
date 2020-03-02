@@ -102,10 +102,11 @@ char* parse_tokens(char cmd[], char *par[]){
 	return line;
 }
 
-void print_input_token(){
+void print_input_token(char * currdir){
 	char env[512];
 	setenv("PS1","$",1);
-	printf("%s@%s%s",getenv("USER"),getenv("PWD"),getenv("PS1")); //print $ as default prompt
+	printf("%s@%s%s",getenv("USER"),currdir,getenv("PS1")); //print $ as default prompt
+
 }
 
 void unix_shell(){
@@ -113,7 +114,9 @@ void unix_shell(){
 		char *envvar[] = {(char*) getenv("PATH"),0};
 		char *bin = "/bin";
 		while(1){
-			print_input_token();
+			char buf[1024];
+			char * currdir = getcwd(buf,1024);
+			print_input_token(currdir);
 			char * input_line = parse_tokens(command,parameters);
 			int has_pipe_char = has_pipe(input_line);
 		if(has_pipe_char == 1){

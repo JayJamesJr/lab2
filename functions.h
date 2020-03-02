@@ -6,5 +6,5 @@ int file_exists(char* filepath);
 char * has_builtin(char * filepath);
 int has_pipe(char * input_line);
 char * parse_tokens(char cmd[], char *par[]);
-void print_input_token();
+void print_input_token(char * currdir);
 void unix_shell();
