@@ -103,7 +103,9 @@ char* parse_tokens(char cmd[], char *par[]){
 }
 
 void print_input_token(){
-	printf("$"); //print $ as default prompt
+	char env[512];
+	setenv("PS1","$",1);
+	printf("%s@%s%s",getenv("USER"),getenv("PWD"),getenv("PS1")); //print $ as default prompt
 }
 
 void unix_shell(){
@@ -144,9 +146,10 @@ void unix_shell(){
 					execve(path,parameters,envvar);
 				}else{
 					perror("Command not found");
-			}	
+				}	
 			    
-		    	} else { 
+		    	}
+		    } else { 
 			// Parent executing 
 			p2 = fork(); 
 
@@ -171,7 +174,7 @@ void unix_shell(){
 				}else{
 					perror("Command not found");
 				}			     
-			} else { 
+			}} else { 
 			    // parent executing, waiting for two children 
 			    wait(NULL); 
 			    wait(NULL); 
